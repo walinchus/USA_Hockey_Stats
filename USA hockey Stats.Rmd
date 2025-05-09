@@ -1,0 +1,288 @@
+---
+title: "PHF"
+output: html_document
+date: "2023-05-21"
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(fastRhockey)
+library(purrr)
+library(sportyR)
+library(ggplot2)
+
+```
+
+
+Data from here: https://www.usahockey.com/membershipstats
+
+
+No 6U female data for 2021
+
+
+```{r}
+data <- rio::import("USA Hockey Numbers 2015-2024.xlsx") %>% 
+  select(-`File Name`)
+```
+
+
+
+How many people have registered over time?
+
+
+
+
+```{r}
+data %>% 
+  filter(Gender=="A") %>% 
+ggplot(aes(Season,`all ages`))+
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+And growth of girls hockey
+
+
+```{r}
+data %>% 
+  filter(Gender=="F") %>% 
+ggplot(aes(Season,`all ages`))+
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+
+
+Transforming to a tidy format
+
+```{r}
+tidy_data <- data %>% 
+  pivot_longer(cols=c(`all ages`,`19&over`,`17-18`,`15-16`,`13-14`,`11-12`,`9-10`,`7-8`,`6&U`),names_to = "age",values_to = "number")
+
+tidy_data
+```
+
+
+
+Looking at growth in each district
+
+```{r}
+tidy_data %>% 
+  filter(Gender=="A") %>% 
+  filter(age=="all ages") %>% 
+ggplot(aes(Season,number, fill = District))+
+  geom_col()+
+  facet_wrap(~District)
+```
+
+
+
+
+
+Looking at growth in each district, without numbers relative to each other
+
+```{r}
+tidy_data %>% 
+  filter(Gender=="A") %>% 
+  filter(age=="all ages") %>% 
+ggplot(aes(Season,number, fill = District))+
+  geom_col()+
+  facet_wrap(~District, scales="free")
+```
+
+
+
+
+
+
+Looking at growth for girls in each district
+
+```{r}
+tidy_data %>% 
+  filter(Gender=="F") %>% 
+  filter(age=="all ages") %>% 
+ggplot(aes(Season,number, fill = District))+
+  geom_col()+
+  facet_wrap(~District)
+```
+
+
+
+
+
+Looking at growth for girls in each district, without numbers relative to each other
+
+```{r}
+tidy_data %>% 
+  filter(Gender=="F") %>% 
+  filter(age=="all ages") %>% 
+ggplot(aes(Season,number, fill = District))+
+  geom_col()+
+  facet_wrap(~District, scales="free")
+```
+
+
+
+
+How have age groups grown over time? 
+
+```{r}
+tidy_data %>% 
+  filter(age!="all ages") %>% 
+  filter(Gender=="A") %>% 
+ggplot(aes(Season,number, fill = age))+
+  geom_col()+
+  facet_wrap(~age)
+```
+
+
+
+There are so many adults that this is a bit hard to read, so taking those out. 
+
+
+
+```{r}
+tidy_data %>% 
+  filter(age!="all ages") %>% 
+  filter(age!="19&over") %>% 
+  filter(Gender=="A") %>% 
+ggplot(aes(Season,number, fill = age))+
+  geom_col()+
+  facet_wrap(~age)
+```
+
+
+Wow big drop off in high school actually. How does this look for girls?
+
+
+
+
+
+```{r}
+tidy_data %>% 
+  filter(age!="all ages") %>% 
+  filter(age!="19&over") %>% 
+  filter(Gender=="F") %>% 
+ggplot(aes(Season,number, fill = age))+
+  geom_col()+
+  facet_wrap(~age)
+```
+
+Wow also huge drop off in high school. I thought there would be a bantam drop off but no. 
+
+
+What's the growth of women's hockey?
+
+
+```{r}
+tidy_data %>% 
+  filter(age=="19&over") %>% 
+  filter(Gender=="F") %>% 
+ggplot(aes(Season,number, fill = age))+
+  geom_col()+
+  facet_wrap(~age)
+```
+
+
+
+```{r}
+tidy_data %>% 
+  filter(age=="19&over") %>% 
+  filter(Gender=="F") %>% 
+ggplot(aes(Season,number, fill = age))+
+  geom_col()+
+    facet_wrap(~District)
+```
+
+
+
+
+Looking at Coach numbers.
+
+This is not on their website, I got this from USA hockey. I asked for it and they emailed me. 
+
+```{r}
+coaches <- rio::import("coach numbers.xlsx", sheet="coaches") %>% 
+  mutate(total_coaches=Female+Male) %>% 
+  mutate(percent_female_per_district_per_year=Female/total_coaches)
+
+
+```
+
+How many coaches are there per year? 
+
+
+```{r}
+total_coaches <- coaches %>% 
+  group_by(Year) %>% 
+  summarize(total=sum(total_coaches))
+
+total_coaches %>% 
+  ggplot(aes(Year,total))+
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+How many female coaches?
+
+
+```{r}
+female_coaches <- coaches %>% 
+  group_by(Year) %>% 
+  summarize(total=sum(Female))
+
+female_coaches %>% 
+  ggplot(aes(Year,total))+
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+
+What percentage are female each year? 
+```{r}
+percent_female <- coaches %>% 
+  group_by(Year) %>% 
+  summarize(total=sum(total_coaches),total_female=sum(Female),percent_female=(total_female/total)) %>% 
+  mutate(percent_female=round(percent_female,3))
+
+percent_female %>% 
+  ggplot(aes(Year,percent_female))+
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+
+
+What percent of all players are females? 
+
+```{r}
+tidy_data %>% 
+  filter(age=="all ages") %>% 
+  group_by(Season,Gender) %>% 
+  summarize(total=sum(number)) %>% 
+  pivot_wider(names_from = Gender,values_from = total) %>% 
+  mutate(percent_female=`F`/`A`) %>% 
+  ggplot(aes(Season,round(percent_female,2))) +
+  geom_col()+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
