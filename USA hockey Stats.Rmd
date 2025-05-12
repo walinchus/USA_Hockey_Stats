@@ -173,7 +173,7 @@ ggplot(aes(Season,number, fill = age))+
 ```
 
 
-Wow big drop off in high school actually. Though I have read that high school teams often do not also register for USA hockey. They have to register if they play in USA hockey event, but not for high school itself.
+Wow big drop off in high school actually. I asked USA hockey about this, and they said that  They have to register if they play in USA hockey event, but not for high school itself. So some high school hockey is USA Hockey and others are not, it just depends on the state and the program.
 
 
 How does this look for girls?
