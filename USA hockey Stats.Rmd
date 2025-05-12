@@ -156,6 +156,7 @@ tidy_data %>%
 ggplot(aes(Season,number, fill = age))+
   geom_col()+
   facet_wrap(~age)+
+  theme(text = element_text(size = 25))+
   labs(title = "Number of people registered to play USA hockey by age group")+
   geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
@@ -174,6 +175,7 @@ tidy_data %>%
 ggplot(aes(Season,number, fill = age))+
   geom_col()+
   facet_wrap(~age)+
+  theme(text = element_text(size = 20))+
   labs(title = "Number of people registered to play USA hockey")+
   geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
