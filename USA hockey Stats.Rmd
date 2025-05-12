@@ -75,15 +75,16 @@ Looking at growth in each district.
 Note: Here is the map of each district ![from USA hockey](Usahockeydistrictmap.png)
 
 
-```{r fig.width=20, fig.height=15}
+```{r fig.width=25, fig.height=35}
 tidy_data %>% 
   filter(Gender=="A") %>% 
   filter(age=="all ages") %>% 
 ggplot(aes(Season,number, fill = District))+
   geom_col()+
   facet_wrap(~District, ncol=3)+
-  theme(text = element_text(size = 20))+
-  labs(title = "Number of people registered to play USA hockey")
+  theme(text = element_text(size = 25))+
+  labs(title = "Number of people registered to play USA hockey")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -102,7 +103,8 @@ ggplot(aes(Season,number, fill = District))+
   geom_col()+
   facet_wrap(~District, scales="free", ncol=3)+
   theme(text = element_text(size = 20))+
-  labs(title = "Number of people registered to play USA hockey", caption = "Note different scales")
+  labs(title = "Number of people registered to play USA hockey", caption = "Note different scales")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -112,7 +114,7 @@ ggplot(aes(Season,number, fill = District))+
 
 Looking at growth for girls in each district
 
-```{r fig.height=15, fig.width=20}
+```{r fig.height=20, fig.width=20}
 tidy_data %>% 
   filter(Gender=="F") %>% 
   filter(age=="all ages") %>% 
@@ -120,7 +122,8 @@ ggplot(aes(Season,number, fill = District))+
   geom_col()+
   facet_wrap(~District,ncol=3)+
   theme(text = element_text(size = 20))+
-  labs(title = "Number of females registered to play USA hockey")
+  labs(title = "Number of females registered to play USA hockey")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -129,7 +132,7 @@ ggplot(aes(Season,number, fill = District))+
 
 Looking at growth for girls in each district, without numbers relative to each other
 
-```{r fig.width=20, fig.height=15}
+```{r fig.width=20, fig.height=23}
 tidy_data %>% 
   filter(Gender=="F") %>% 
   filter(age=="all ages") %>% 
@@ -137,7 +140,8 @@ ggplot(aes(Season,number, fill = District))+
   geom_col()+
   facet_wrap(~District, scales="free", ncol=3)+
   theme(text = element_text(size = 20))+
-  labs(title = "Number of females registered to play USA hockey", caption = "Note different scales")
+  labs(title = "Number of females registered to play USA hockey", caption = "Note different scales")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -145,14 +149,15 @@ ggplot(aes(Season,number, fill = District))+
 
 How have age groups grown over time? 
 
-```{r}
+```{r fig.width=20, fig.height=20}
 tidy_data %>% 
   filter(age!="all ages") %>% 
   filter(Gender=="A") %>% 
 ggplot(aes(Season,number, fill = age))+
   geom_col()+
   facet_wrap(~age)+
-  labs(title = "Number of people registered to play USA hockey by age group")
+  labs(title = "Number of people registered to play USA hockey by age group")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -161,7 +166,7 @@ There are so many adults that this is a bit hard to read, so taking those out.
 
 
 
-```{r}
+```{r fig.width=20, fig.height=20}
 tidy_data %>% 
   filter(age!="all ages") %>% 
   filter(age!="19&over") %>% 
@@ -169,7 +174,8 @@ tidy_data %>%
 ggplot(aes(Season,number, fill = age))+
   geom_col()+
   facet_wrap(~age)+
-  labs(title = "Number of people registered to play USA hockey")
+  labs(title = "Number of people registered to play USA hockey")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 
@@ -182,7 +188,7 @@ How does this look for girls?
 
 
 
-```{r}
+```{r fig.width=20, fig.height=20}
 tidy_data %>% 
   filter(age!="all ages") %>% 
   filter(age!="19&over") %>% 
@@ -190,7 +196,8 @@ tidy_data %>%
 ggplot(aes(Season,number, fill = age))+
   geom_col()+
   facet_wrap(~age)+
-  labs(title = "Number of females registered to play USA hockey")
+  labs(title = "Number of females registered to play USA hockey")+
+  geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)
 ```
 
 Bit of a drop in Bantams. And the same high school drop we see above. 
@@ -314,7 +321,7 @@ coaches %>%
   facet_wrap(~District,ncol=3)+
   geom_text(aes(label = after_stat(y)), stat="summary", fun="sum",vjust=-0.5)+
   theme(text = element_text(size = 20))+
-  labs(title="Percent of female USA Hockey players per year")
+  labs(title="Percent of female USA Hockey coaches per year")
 ```
 
 
